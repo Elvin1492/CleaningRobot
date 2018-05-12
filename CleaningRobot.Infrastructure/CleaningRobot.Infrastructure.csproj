@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,12 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="CleanService.cs" />
     <Compile Include="Core\Cell.cs" />
     <Compile Include="Core\Enums\CellStateEnum.cs" />
     <Compile Include="Core\Enums\CommandEnum.cs" />
     <Compile Include="Core\Enums\FacingEnum.cs" />
     <Compile Include="Core\Order.cs" />
+    <Compile Include="Core\Result.cs" />
     <Compile Include="Core\StateOfRobot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
