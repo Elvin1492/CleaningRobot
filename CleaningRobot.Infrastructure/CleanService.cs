@@ -52,52 +52,32 @@ namespace CleaningRobot.Infrastructure
 
         public void Advance()
         {
-            var nextPoint = new Point { X = _order.CurrentState.Cell.Point.X, Y = _order.CurrentState.Cell.Point.Y };
-
-            if (!HasEnoughBatteryCappacity(CommandEnum.TL))
-            {
-                BackOffStrategy(_order.CurrentState);
-                return;
-            }
-
+            var nextPoint = IsNextCellAvaliable();
             _order.Battery -= 2;
 
-            switch (_order.CurrentState.Faceing)
+            if (!HasEnoughBatteryCappacity(CommandEnum.TL) || !nextPoint.Item1)
             {
-                case FacingEnum.North:
-                    nextPoint.Y--;
-                    break;
-                case FacingEnum.East:
-                    nextPoint.X++;
-                    break;
-                case FacingEnum.South:
-                    nextPoint.Y++;
-                    break;
-                case FacingEnum.West:
-                    nextPoint.X--;
-                    break;
-            }
-
-            if (nextPoint.X > _order.Map.Count && nextPoint.Y > _order.Map.First().Count)
-            {
-                BackOffStrategy(_order.CurrentState);
+                if (IsBackOffStrategyEnabled) return;
+                BackOffStrategy();
                 return;
             }
 
-            _order.CurrentState.Cell.Point = nextPoint;
+            _order.CurrentState.Cell.Point = nextPoint.Item2;
 
             _result.VisitedCells.Add(new Cell
             {
-                Point = nextPoint
+                Point = nextPoint.Item2
             });
             _result.FinalState = _order.CurrentState;
+            IsBackOffStrategyEnabled = false;
         }
 
         public void TurnLeft()
         {
             if (!HasEnoughBatteryCappacity(CommandEnum.TL))
             {
-                BackOffStrategy(_order.CurrentState);
+                if (IsBackOffStrategyEnabled) return;
+                BackOffStrategy();
                 return;
             }
 
@@ -124,7 +104,8 @@ namespace CleaningRobot.Infrastructure
         {
             if (!HasEnoughBatteryCappacity(CommandEnum.TR))
             {
-                BackOffStrategy(_order.CurrentState);
+                if (IsBackOffStrategyEnabled) return;
+                BackOffStrategy();
                 return;
             }
 
@@ -147,9 +128,17 @@ namespace CleaningRobot.Infrastructure
             _result.FinalState = _order.CurrentState;
         }
 
-        public void BackOffStrategy(StateOfRobot stateOfRobot)
+        public bool IsBackOffStrategyEnabled { get; set; }
+        public void BackOffStrategy()
         {
-
+            IsBackOffStrategyEnabled = true;
+            TurnRight();
+            Advance();
+            if (IsBackOffStrategyEnabled)
+            {
+                TurnLeft();
+                
+            }
         }
 
         public bool HasEnoughBatteryCappacity(CommandEnum command)
@@ -168,6 +157,34 @@ namespace CleaningRobot.Infrastructure
                 default:
                     return false;
             }
+        }
+
+        public Tuple<bool, Point> IsNextCellAvaliable()
+        {
+            var nextPoint = new Point { X = _order.CurrentState.Cell.Point.X, Y = _order.CurrentState.Cell.Point.Y };
+
+            switch (_order.CurrentState.Faceing)
+            {
+                case FacingEnum.North:
+                    nextPoint.Y--;
+                    break;
+                case FacingEnum.East:
+                    nextPoint.X++;
+                    break;
+                case FacingEnum.South:
+                    nextPoint.Y++;
+                    break;
+                case FacingEnum.West:
+                    nextPoint.X--;
+                    break;
+            }
+
+            if ((nextPoint.X > _order.Map.Count || nextPoint.Y > _order.Map.First().Count) || _order.Map[nextPoint.X][nextPoint.Y].State == CellStateEnum.StateN || _order.Map[nextPoint.X][nextPoint.Y].State == CellStateEnum.StateC)
+            {
+                return new Tuple<bool, Point>(false, new Point());
+            }
+
+            return new Tuple<bool, Point>(true, nextPoint);
         }
     }
 }

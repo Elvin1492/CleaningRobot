@@ -52,7 +52,7 @@ namespace CleaningRobot.ConsoleApp.UnitTests
         [Test]
         [TestCase(1, 1, FacingEnum.East, 2, 1)]
         [TestCase(1, 1, FacingEnum.North, 1, 0)]
-        [TestCase(1, 1, FacingEnum.South, 1, 2)]
+        [TestCase(1, 0, FacingEnum.South, 1, 1)]
         [TestCase(1, 1, FacingEnum.West, 0, 1)]
         public void Advance_EverythingNormalForForward_RobotShouldGoNextPoint(int x, int y, FacingEnum facing, int expectedX, int expectedY)
         {
