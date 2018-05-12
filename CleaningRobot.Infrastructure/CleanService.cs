@@ -1,4 +1,5 @@
 ﻿using CleaningRobot.Infrastructure.Core;
+using CleaningRobot.Infrastructure.Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -32,9 +33,10 @@ namespace CleaningRobot.Infrastructure
                     case Core.Enums.CommandEnum.TR:
                         break;
                     case Core.Enums.CommandEnum.TL:
+                        TurnLeft();
                         break;
                     case Core.Enums.CommandEnum.A:
-                        Advance(_order.CurrentState);
+                        Advance();
                         break;
                     case Core.Enums.CommandEnum.B:
                         break;
@@ -47,49 +49,97 @@ namespace CleaningRobot.Infrastructure
             return _result;
         }
 
-        public void Advance(StateOfRobot stateOfRobot)
+        public void Advance()
         {
-            var nextPoint = new Point { X = stateOfRobot.Cell.Point.X, Y = stateOfRobot.Cell.Point.Y };
-            _order.Battery -= 2;
-            switch (stateOfRobot.Faceing)
+            var nextPoint = new Point { X = _order.CurrentState.Cell.Point.X, Y = _order.CurrentState.Cell.Point.Y };
+
+            if (_order.Battery < 2)
             {
-                case Core.Enums.FacingEnum.North:
+                BackOffStrategy(_order.CurrentState);
+                return;
+            }
+
+            _order.Battery -= 2;
+
+            switch (_order.CurrentState.Faceing)
+            {
+                case FacingEnum.North:
                     nextPoint.Y--;
                     break;
-                case Core.Enums.FacingEnum.East:
+                case FacingEnum.East:
                     nextPoint.X++;
                     break;
-                case Core.Enums.FacingEnum.South:
+                case FacingEnum.South:
                     nextPoint.Y++;
                     break;
-                case Core.Enums.FacingEnum.West:
+                case FacingEnum.West:
                     nextPoint.X--;
                     break;
             }
 
-            if (nextPoint.X > _order.Map.Count && nextPoint.Y > _order.Map.First().Count || _order.Battery < 2)
+            if (nextPoint.X > _order.Map.Count && nextPoint.Y > _order.Map.First().Count)
             {
-                BackOffStrategy(stateOfRobot);
+                BackOffStrategy(_order.CurrentState);
                 return;
             }
 
-            stateOfRobot.Cell.Point = nextPoint;
-            
+            _order.CurrentState.Cell.Point = nextPoint;
+
             _result.VisitedCells.Add(new Cell
             {
                 Point = nextPoint
             });
-            _result.FinalState = stateOfRobot;
+            _result.FinalState = _order.CurrentState;
         }
 
-        public void TurnLeft(StateOfRobot stateOfRobot)
+        public void TurnLeft()
         {
+            if (_order.Battery < 1)
+            {
+                BackOffStrategy(_order.CurrentState);
+                return;
+            }
 
+            _order.Battery -= 1;
+            switch (_order.CurrentState.Faceing)
+            {
+                case FacingEnum.North:
+                    _order.CurrentState.Faceing = FacingEnum.West;
+                    break;
+                case FacingEnum.East:
+                    _order.CurrentState.Faceing = FacingEnum.North;
+                    break;
+                case FacingEnum.South:
+                    _order.CurrentState.Faceing = FacingEnum.East;
+                    break;
+                case FacingEnum.West:
+                    _order.CurrentState.Faceing = FacingEnum.South;
+                    break;
+            }
+            _result.FinalState = _order.CurrentState;
         }
 
         public void BackOffStrategy(StateOfRobot stateOfRobot)
         {
 
+        }
+
+        public bool HasEnoughBatteryCappacity(CommandEnum command)
+        {
+            switch (command)
+            {
+                case CommandEnum.TR:
+                case CommandEnum.TL:
+                    return _order.Battery > 0;
+                case CommandEnum.A:
+                    return _order.Battery > 1;
+                case CommandEnum.B:
+                    return _order.Battery > 2;
+                case CommandEnum.C:
+                    return _order.Battery > 4;
+                default:
+                    return false;
+            }
         }
     }
 }

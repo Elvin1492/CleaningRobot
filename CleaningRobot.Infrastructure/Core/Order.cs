@@ -11,6 +11,6 @@ namespace CleaningRobot.Infrastructure.Core
 
         public List<CommandEnum> Commands { get; set; }
 
-        public uint Battery { get; set; }
+        public int Battery { get; set; }
     }
 }

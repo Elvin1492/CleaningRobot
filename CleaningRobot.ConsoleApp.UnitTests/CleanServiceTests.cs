@@ -85,5 +85,27 @@ namespace CleaningRobot.ConsoleApp.UnitTests
 
             Assert.That(expectedFacing, Is.EqualTo(result.FinalState.Faceing));
         }
+
+        [Test]
+        [TestCase(CommandEnum.A, 2, true)]
+        [TestCase(CommandEnum.A, 1, false)]
+        [TestCase(CommandEnum.B, 3, true)]
+        [TestCase(CommandEnum.B, 2, false)]
+        [TestCase(CommandEnum.C, 5, true)]
+        [TestCase(CommandEnum.C, 4, false)]
+        [TestCase(CommandEnum.TL, 1, true)]
+        [TestCase(CommandEnum.TL, 0, false)]
+        [TestCase(CommandEnum.TR, 1, true)]
+        [TestCase(CommandEnum.TR, 0, false)]
+        public void HasEnoughBatteryCappacity_ForAllCommands(CommandEnum command,int battery, bool expectedResult)
+        {
+            _order1.CurrentState = new StateOfRobot { Cell = new Cell { Point = new Point(1, 1), State = CellStateEnum.StateS }, Faceing = FacingEnum.East };
+            _order1.Commands = new List<CommandEnum> { command };
+            _order1.Battery = battery;
+
+            var cleanService = new CleanService(_order1);
+
+            var result = cleanService.HasEnoughBatteryCappacity(command);
+        }
     }
 }
