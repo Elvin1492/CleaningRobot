@@ -31,6 +31,7 @@ namespace CleaningRobot.Infrastructure
                 switch (command)
                 {
                     case Core.Enums.CommandEnum.TR:
+                        TurnRight();
                         break;
                     case Core.Enums.CommandEnum.TL:
                         TurnLeft();
@@ -53,7 +54,7 @@ namespace CleaningRobot.Infrastructure
         {
             var nextPoint = new Point { X = _order.CurrentState.Cell.Point.X, Y = _order.CurrentState.Cell.Point.Y };
 
-            if (HasEnoughBatteryCappacity(CommandEnum.TL))
+            if (!HasEnoughBatteryCappacity(CommandEnum.TL))
             {
                 BackOffStrategy(_order.CurrentState);
                 return;
@@ -94,7 +95,7 @@ namespace CleaningRobot.Infrastructure
 
         public void TurnLeft()
         {
-            if (HasEnoughBatteryCappacity(CommandEnum.TL))
+            if (!HasEnoughBatteryCappacity(CommandEnum.TL))
             {
                 BackOffStrategy(_order.CurrentState);
                 return;
@@ -121,7 +122,7 @@ namespace CleaningRobot.Infrastructure
 
         public void TurnRight()
         {
-            if (HasEnoughBatteryCappacity(CommandEnum.TR))
+            if (!HasEnoughBatteryCappacity(CommandEnum.TR))
             {
                 BackOffStrategy(_order.CurrentState);
                 return;
