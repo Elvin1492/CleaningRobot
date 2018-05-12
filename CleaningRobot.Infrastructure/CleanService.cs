@@ -53,7 +53,7 @@ namespace CleaningRobot.Infrastructure
         {
             var nextPoint = new Point { X = _order.CurrentState.Cell.Point.X, Y = _order.CurrentState.Cell.Point.Y };
 
-            if (_order.Battery < 2)
+            if (HasEnoughBatteryCappacity(CommandEnum.TL))
             {
                 BackOffStrategy(_order.CurrentState);
                 return;
@@ -94,7 +94,7 @@ namespace CleaningRobot.Infrastructure
 
         public void TurnLeft()
         {
-            if (_order.Battery < 1)
+            if (HasEnoughBatteryCappacity(CommandEnum.TL))
             {
                 BackOffStrategy(_order.CurrentState);
                 return;
@@ -114,6 +114,33 @@ namespace CleaningRobot.Infrastructure
                     break;
                 case FacingEnum.West:
                     _order.CurrentState.Faceing = FacingEnum.South;
+                    break;
+            }
+            _result.FinalState = _order.CurrentState;
+        }
+
+        public void TurnRight()
+        {
+            if (HasEnoughBatteryCappacity(CommandEnum.TR))
+            {
+                BackOffStrategy(_order.CurrentState);
+                return;
+            }
+
+            _order.Battery -= 1;
+            switch (_order.CurrentState.Faceing)
+            {
+                case FacingEnum.North:
+                    _order.CurrentState.Faceing = FacingEnum.East;
+                    break;
+                case FacingEnum.East:
+                    _order.CurrentState.Faceing = FacingEnum.South;
+                    break;
+                case FacingEnum.South:
+                    _order.CurrentState.Faceing = FacingEnum.West;
+                    break;
+                case FacingEnum.West:
+                    _order.CurrentState.Faceing = FacingEnum.North;
                     break;
             }
             _result.FinalState = _order.CurrentState;

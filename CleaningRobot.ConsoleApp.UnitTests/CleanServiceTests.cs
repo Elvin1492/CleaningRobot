@@ -87,6 +87,23 @@ namespace CleaningRobot.ConsoleApp.UnitTests
         }
 
         [Test]
+        [TestCase(FacingEnum.North, FacingEnum.East)]
+        [TestCase(FacingEnum.East, FacingEnum.South)]
+        [TestCase(FacingEnum.South, FacingEnum.West)]
+        [TestCase(FacingEnum.West, FacingEnum.North)]
+        public void TurnRight_ForAllFacings_TurnTheRobotToRight(FacingEnum facing, FacingEnum expectedFacing)
+        {
+            _order1.CurrentState = new StateOfRobot { Cell = new Cell { Point = new Point(1, 1), State = CellStateEnum.StateS }, Faceing = facing };
+            _order1.Commands = new List<CommandEnum> { CommandEnum.TR };
+
+            var cleanService = new CleanService(_order1);
+
+            var result = cleanService.Start();
+
+            Assert.That(expectedFacing, Is.EqualTo(result.FinalState.Faceing));
+        }
+
+        [Test]
         [TestCase(CommandEnum.A, 2, true)]
         [TestCase(CommandEnum.A, 1, false)]
         [TestCase(CommandEnum.B, 3, true)]
@@ -106,6 +123,8 @@ namespace CleaningRobot.ConsoleApp.UnitTests
             var cleanService = new CleanService(_order1);
 
             var result = cleanService.HasEnoughBatteryCappacity(command);
+
+            Assert.That(expectedResult, Is.EqualTo(result));
         }
     }
 }
