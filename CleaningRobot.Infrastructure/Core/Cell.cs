@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CleaningRobot.Infrastructure.Core
 {
-    public class Cell
+    public class Cell : IEquatable<Cell>
     {
         public Point Point { get; set; }
         public CellStateEnum State { get; set; }
@@ -19,6 +19,42 @@ namespace CleaningRobot.Infrastructure.Core
             {
                 return State == CellStateEnum.StateS;
             }
+        }
+
+        public bool Equals(Cell other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            if (this.Point.X == other.Point.X && this.Point.Y == other.Point.Y && this.State == other.State && this.IsVisited == other.IsVisited)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public override bool Equals(Object obj)
+        {
+            if (obj == null)
+                return false;
+
+            Cell personObj = obj as Cell;
+
+            if (personObj == null)
+                return false;
+            else
+                return Equals(personObj);
+
+        }
+
+        public override int GetHashCode()
+
+        {
+
+            return this.IsVisited.GetHashCode();
+
         }
     }
 }

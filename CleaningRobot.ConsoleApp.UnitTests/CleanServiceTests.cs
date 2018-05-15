@@ -50,6 +50,157 @@ namespace CleaningRobot.ConsoleApp.UnitTests
         }
 
         [Test]
+        public void Start_Order1_ShouldReturnExpectedResult()
+        {
+            _order1.Commands = new List<CommandEnum> {
+                CommandEnum.TL,
+                CommandEnum.A,
+                CommandEnum.C,
+                CommandEnum.A,
+                CommandEnum.C,
+                CommandEnum.TR,
+                CommandEnum.A,
+                CommandEnum.C
+            };
+            _order1.CurrentState = new StateOfRobot
+            {
+                Faceing = FacingEnum.North,
+                Cell = new Cell { Point = new Point(3, 0) }
+            };
+            var expectedVisitedCells = new List<Cell>
+            {
+                new Cell
+                {
+                     Point = new Point(3,0),
+                    State =CellStateEnum.StateS,
+                    IsVisited = false
+
+                },
+                 new Cell
+                {
+                    Point = new Point(2,0),
+                    State =CellStateEnum.StateS,
+                    IsVisited = false
+                },
+                  new Cell
+                {
+                     Point = new Point(1,0),
+                    State =CellStateEnum.StateS,
+                    IsVisited = false
+                }
+            };
+            var expectedCleanedCells = new List<Cell>
+            {
+                new Cell
+                {
+                     Point = new Point(2,0),
+                    State =CellStateEnum.StateS,
+                    IsVisited = false
+                },
+                new Cell
+                {
+                     Point = new Point(1,0),
+                    State =CellStateEnum.StateS,
+                    IsVisited = false
+                }
+            };
+
+            var cleanService = new CleanService(_order1);
+
+            var result = cleanService.Start();
+
+            Assert.That(54, Is.EqualTo(result.Battery));
+            Assert.That(3, Is.EqualTo(result.VisitedCells.Count));
+            CollectionAssert.AreEqual(expectedVisitedCells, result.VisitedCells);
+            Assert.That(2, Is.EqualTo(result.CleanedCells.Count));
+            CollectionAssert.AreEqual(expectedCleanedCells, result.CleanedCells);
+            Assert.That(FacingEnum.East, Is.EqualTo(result.FinalState.Faceing));
+        }
+
+        [Test]
+        public void Start_Order2_ShouldReturnExpectedResult()
+        {
+            _order1.Commands = new List<CommandEnum> {
+                CommandEnum.TR,
+                CommandEnum.A,
+                CommandEnum.C,
+                CommandEnum.A,
+                CommandEnum.C,
+                CommandEnum.TR,
+                CommandEnum.A,
+                CommandEnum.C
+            };
+            _order1.CurrentState = new StateOfRobot
+            {
+                Faceing = FacingEnum.South,
+                Cell = new Cell { Point = new Point(3, 1) }
+            };
+
+            _order1.Battery = 1094;
+
+            var expectedVisitedCells = new List<Cell>
+            {
+                new Cell
+                {
+                     Point = new Point(3,2),
+                    State =CellStateEnum.StateS,
+                    IsVisited = false
+
+                },
+                 new Cell
+                {
+                    Point = new Point(3,1),
+                    State =CellStateEnum.StateS,
+                    IsVisited = false
+                },
+                  new Cell
+                {
+                    Point = new Point(3,0),
+                    State =CellStateEnum.StateS,
+                    IsVisited = false
+                },
+                new Cell
+                {
+                    Point = new Point(2,2),
+                    State =CellStateEnum.StateS,
+                    IsVisited = false
+                }
+            };
+            var expectedCleanedCells = new List<Cell>
+            {
+                new Cell
+                {
+                     Point = new Point(3,2),
+                    State =CellStateEnum.StateS,
+                    IsVisited = false
+                },
+                new Cell
+                {
+                     Point = new Point(3,0),
+                    State =CellStateEnum.StateS,
+                    IsVisited = false
+                },
+                new Cell
+                {
+                     Point = new Point(2,2),
+                    State =CellStateEnum.StateS,
+                    IsVisited = false
+                }
+            };
+
+            var cleanService = new CleanService(_order1);
+
+            var result = cleanService.Start();
+
+            Assert.That(1040, Is.EqualTo(result.Battery));
+            Assert.That(4, Is.EqualTo(result.VisitedCells.Count));
+            CollectionAssert.AreEqual(expectedVisitedCells, result.VisitedCells);
+            Assert.That(2, Is.EqualTo(result.CleanedCells.Count));
+            CollectionAssert.AreEqual(expectedCleanedCells, result.CleanedCells);
+            Assert.That(FacingEnum.East, Is.EqualTo(result.FinalState.Faceing));
+        }
+
+        [Test]
         [TestCase(1, 1, FacingEnum.East, 2, 1)]
         [TestCase(1, 1, FacingEnum.North, 1, 0)]
         [TestCase(1, 0, FacingEnum.South, 1, 1)]
@@ -114,7 +265,7 @@ namespace CleaningRobot.ConsoleApp.UnitTests
         [TestCase(CommandEnum.TL, 0, false)]
         [TestCase(CommandEnum.TR, 1, true)]
         [TestCase(CommandEnum.TR, 0, false)]
-        public void HasEnoughBatteryCappacity_ForAllCommands(CommandEnum command,int battery, bool expectedResult)
+        public void HasEnoughBatteryCappacity_ForAllCommands(CommandEnum command, int battery, bool expectedResult)
         {
             _order1.CurrentState = new StateOfRobot { Cell = new Cell { Point = new Point(1, 1), State = CellStateEnum.StateS }, Faceing = FacingEnum.East };
             _order1.Commands = new List<CommandEnum> { command };
