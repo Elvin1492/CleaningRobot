@@ -275,7 +275,7 @@ namespace CleaningRobot.Infrastructure
             {
                 case FacingEnum.North:
                     nextPoint.Y++;
-                    break;
+                    break; 
                 case FacingEnum.East:
                     nextPoint.X--;
                     break;

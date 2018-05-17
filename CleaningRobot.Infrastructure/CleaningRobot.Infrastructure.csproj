@@ -49,6 +49,7 @@
     <Compile Include="Core\Order.cs" />
     <Compile Include="Core\Result.cs" />
     <Compile Include="Core\StateOfRobot.cs" />
+    <Compile Include="OrderFromJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
