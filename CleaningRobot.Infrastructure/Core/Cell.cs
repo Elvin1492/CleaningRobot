@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CleaningRobot.Infrastructure.Core
 {
-    public class Cell : IEquatable<Cell>
+    public class Cell : IEquatable<Cell>, IComparable<Cell>
     {
         public Point Point { get; set; }
         public CellStateEnum State { get; set; }
@@ -21,7 +21,19 @@ namespace CleaningRobot.Infrastructure.Core
             }
         }
 
-        public bool Equals(Cell other)
+		public int CompareTo(Cell other)
+		{
+			if (this.Point.X == other.Point.X)
+			{
+				return this.Point.Y - other.Point.Y;
+			}
+			else
+			{
+				return this.Point.X - other.Point.X;
+			}
+		}
+
+		public bool Equals(Cell other)
         {
             if (other == null)
             {

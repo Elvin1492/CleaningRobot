@@ -1,4 +1,5 @@
-﻿using CleaningRobot.Infrastructure.Core.Enums;
+﻿using System;
+using CleaningRobot.Infrastructure.Core.Enums;
 
 namespace CleaningRobot.Infrastructure.Core
 {
@@ -6,5 +7,5 @@ namespace CleaningRobot.Infrastructure.Core
     {
         public Cell Cell { get; set; }
         public FacingEnum Faceing { get; set; }
-    }
+	}
 }

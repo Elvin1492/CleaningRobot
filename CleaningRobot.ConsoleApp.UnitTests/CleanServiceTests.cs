@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using CleaningRobot.Infrastructure;
 using CleaningRobot.Infrastructure.Core;
 using CleaningRobot.Infrastructure.Core.Enums;
@@ -191,17 +192,22 @@ namespace CleaningRobot.ConsoleApp.UnitTests
             var cleanService = new CleanService(_order1);
 
             var result = cleanService.Start();
+			expectedVisitedCells = expectedVisitedCells.OrderBy(x => x.Point.X).ThenBy(x => x.Point.Y).ToList();
+			result.VisitedCells = result.VisitedCells.OrderBy(x => x.Point.X).ThenBy(x => x.Point.Y).ToList();
 
-            Assert.That(1040, Is.EqualTo(result.Battery));
+			expectedCleanedCells = expectedCleanedCells.OrderBy(x => x.Point.X).ThenBy(x => x.Point.Y).ToList();
+			result.CleanedCells = result.CleanedCells.OrderBy(x => x.Point.X).ThenBy(x => x.Point.Y).ToList();
+
+			Assert.That(1040, Is.EqualTo(result.Battery));
             Assert.That(4, Is.EqualTo(result.VisitedCells.Count));
             CollectionAssert.AreEqual(expectedVisitedCells, result.VisitedCells);
-            Assert.That(2, Is.EqualTo(result.CleanedCells.Count));
+            Assert.That(3, Is.EqualTo(result.CleanedCells.Count));
             CollectionAssert.AreEqual(expectedCleanedCells, result.CleanedCells);
             Assert.That(FacingEnum.East, Is.EqualTo(result.FinalState.Faceing));
         }
 
         [Test]
-        [TestCase(1, 1, FacingEnum.East, 2, 1)]
+        [TestCase(0, 0, FacingEnum.East, 1, 0)]
         [TestCase(1, 1, FacingEnum.North, 1, 0)]
         [TestCase(1, 0, FacingEnum.South, 1, 1)]
         [TestCase(1, 1, FacingEnum.West, 0, 1)]

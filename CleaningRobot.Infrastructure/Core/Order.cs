@@ -12,5 +12,10 @@ namespace CleaningRobot.Infrastructure.Core
         public List<CommandEnum> Commands { get; set; }
 
         public int Battery { get; set; }
+
+		public Order()
+		{
+			Map = new List<List<Cell>>();
+		}
     }
 }
